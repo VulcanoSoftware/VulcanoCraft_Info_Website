@@ -489,6 +489,60 @@ document.addEventListener("DOMContentLoaded", function () {
 	var icon = pill ? pill.querySelector(".ip-copy-icon") : null;
 	var ip = pill ? pill.getAttribute("data-ip") || pill.textContent.trim() : "";
 
+	var navToggle = document.querySelector(".nav-toggle");
+	var mainNav = document.querySelector(".main-nav");
+
+	function openNav() {
+		document.body.classList.add("nav-open");
+		if (navToggle) {
+			navToggle.setAttribute("aria-expanded", "true");
+		}
+	}
+
+	function closeNav() {
+		document.body.classList.remove("nav-open");
+		if (navToggle) {
+			navToggle.setAttribute("aria-expanded", "false");
+		}
+	}
+
+	if (navToggle && mainNav) {
+		navToggle.addEventListener("click", function (event) {
+			event.stopPropagation();
+			if (document.body.classList.contains("nav-open")) {
+				closeNav();
+			} else {
+				openNav();
+			}
+		});
+
+		mainNav.addEventListener("click", function (event) {
+			var target = event.target;
+			if (target && target.closest("a")) {
+				closeNav();
+			}
+		});
+
+		document.addEventListener("click", function (event) {
+			if (!document.body.classList.contains("nav-open")) {
+				return;
+			}
+			if (event.target === navToggle || navToggle.contains(event.target)) {
+				return;
+			}
+			if (mainNav.contains(event.target)) {
+				return;
+			}
+			closeNav();
+		});
+
+		document.addEventListener("keydown", function (event) {
+			if (event.key === "Escape" || event.key === "Esc") {
+				closeNav();
+			}
+		});
+	}
+
 	function showMessage(textKey, fallback) {
 		if (!message) {
 			return;

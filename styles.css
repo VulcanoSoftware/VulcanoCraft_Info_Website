@@ -61,6 +61,66 @@ main {
 	gap: 0.9rem;
 }
 
+.nav-toggle {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	width: 40px;
+	height: 40px;
+	border-radius: 999px;
+	border: 1px solid rgba(148, 163, 184, 0.65);
+	background:
+		radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 55%),
+		rgba(15, 23, 42, 0.96);
+	cursor: pointer;
+	padding: 0;
+	box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+	transition: background 0.18s ease, transform 0.12s ease, box-shadow 0.12s ease, border-color 0.18s ease,
+		opacity 0.18s ease;
+}
+
+.nav-toggle-icon {
+	width: 22px;
+	height: 22px;
+}
+
+.nav-icon-burger,
+.nav-icon-close {
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	transform-origin: 12px 12px;
+}
+
+.nav-icon-close {
+	opacity: 0;
+	transform: scale(0.7);
+}
+
+.nav-toggle-line {
+	stroke: #e5e7eb;
+	stroke-width: 2;
+	stroke-linecap: round;
+	transform-origin: 12px 12px;
+	transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.nav-toggle-cross-line {
+	stroke: #e5e7eb;
+	stroke-width: 2;
+	stroke-linecap: round;
+}
+
+.nav-toggle:hover {
+	transform: translateY(-1px) scale(1.03);
+	border-color: rgba(94, 234, 212, 0.9);
+	box-shadow: 0 16px 34px rgba(15, 23, 42, 1);
+}
+
+.nav-toggle:focus-visible {
+	outline: 2px solid #22d3ee;
+	outline-offset: 2px;
+}
+
 .brand {
 	display: flex;
 	align-items: center;
@@ -79,6 +139,12 @@ main {
 	align-items: center;
 	justify-content: center;
 	font-size: 0;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.brand-logo:hover {
+	transform: rotate(-3deg) scale(1.03);
+	box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
 }
 
 .brand-text {
@@ -444,7 +510,7 @@ main {
 	transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 	position: relative;
 	overflow: hidden;
-	animation: fadeInUp 0.7s ease-out both;
+	animation: fadeInUp 0.7s ease-out both, cardGlow 5.5s ease-in-out infinite;
 }
 
 .info-card h2,
@@ -474,6 +540,7 @@ main {
 		radial-gradient(circle at bottom right, rgba(45, 212, 191, 0.16), transparent 55%);
 	opacity: 0;
 	pointer-events: none;
+	animation: cardSheen 7s ease-in-out infinite;
 	transition: opacity 0.18s ease;
 }
 
@@ -858,19 +925,85 @@ main {
 	}
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1300px) {
 	.header-inner {
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: center;
+		gap: 1.2rem;
+		position: relative;
 	}
 
 	.header-right {
 		width: 100%;
 		justify-content: space-between;
+		align-items: center;
+		gap: 0.7rem;
 	}
 
 	.main-nav {
-		justify-content: flex-start;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 100%;
+		display: none;
+		flex-direction: column;
+		align-items: stretch;
+		padding: 0.6rem 1.5rem 1rem;
+		background:
+			radial-gradient(circle at top left, rgba(129, 140, 248, 0.2), transparent 55%),
+			radial-gradient(circle at bottom right, rgba(45, 212, 191, 0.2), transparent 55%),
+			rgba(15, 23, 42, 0.98);
+		box-shadow: 0 20px 40px rgba(15, 23, 42, 0.95);
+		border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+		z-index: 25;
+	}
+
+	.nav-toggle {
+		display: inline-flex;
+	}
+
+	body.nav-open .main-nav {
+		display: flex;
+	}
+
+	body.nav-open {
+		overflow: hidden;
+	}
+
+	body.nav-open .nav-toggle-line-top {
+		transform: translateY(4px) rotate(45deg);
+	}
+
+	body.nav-open .nav-toggle-line-middle {
+		opacity: 0;
+	}
+
+	body.nav-open .nav-toggle-line-bottom {
+		transform: translateY(-4px) rotate(-45deg);
+	}
+
+	body.nav-open .nav-icon-burger {
+		opacity: 0;
+		transform: scale(0.85);
+	}
+
+	body.nav-open .nav-icon-close {
+		opacity: 1;
+		transform: scale(1.6);
+	}
+}
+
+@media (max-width: 800px) {
+	.container {
+		padding: 0 1.8rem;
+	}
+
+	.nav-toggle {
+		margin-left: 0.75rem;
+	}
+
+	.lang-switcher {
+		margin-right: 0.75rem;
 	}
 
 	.hero-inner {
@@ -906,6 +1039,40 @@ main {
 	.brand-logo {
 		width: 34px;
 		height: 34px;
+	}
+
+	.container {
+		padding: 0 2.4rem;
+	}
+
+	.nav-toggle {
+		margin-left: 1rem;
+	}
+
+	.lang-switcher {
+		margin-right: 1rem;
+	}
+
+	.header-inner {
+		padding: 0.7rem 0;
+	}
+
+	.brand-name {
+		font-size: 0.98rem;
+	}
+
+	.brand-tagline {
+		display: none;
+	}
+
+	.lang-btn {
+		padding: 0.3rem 0.7rem;
+		font-size: 0.72rem;
+	}
+
+	.lang-flag {
+		width: 28px;
+		height: 18px;
 	}
 
 	.hero {

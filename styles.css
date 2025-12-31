@@ -743,7 +743,7 @@ main {
 
 .spec-list ul {
 	list-style: none;
-	margin: 0.25rem 0 0.3rem 1.3rem;
+	margin: 0.35rem 0 0.3rem 0;
 	padding-left: 0;
 }
 
@@ -764,6 +764,31 @@ main {
 	height: 6px;
 	border-radius: 999px;
 	background: linear-gradient(135deg, #22d3ee, #6366f1);
+}
+
+.spec-list li ul li {
+	padding-left: 1.3rem;
+	font-size: 0.9rem;
+	color: rgba(209, 213, 219, 0.9);
+}
+
+.spec-list li ul li::before {
+	width: 5px;
+	height: 5px;
+	background: rgba(148, 163, 184, 0.85);
+}
+
+.spec-group {
+	margin: 0.5rem 0 0.8rem 0.2rem;
+	padding: 0.6rem 1rem 0.7rem 1.3rem;
+	border-radius: 12px;
+	background: rgba(15, 23, 42, 0.9);
+	border: 1px solid rgba(30, 64, 175, 0.75);
+	box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+}
+
+.spec-group::before {
+	display: none;
 }
 
 .status-grid {
@@ -1036,13 +1061,25 @@ main {
 }
 
 @media (max-width: 520px) {
+	body {
+		padding: 0;
+	}
+
+	main {
+		padding-bottom: 1.5rem;
+	}
+
+	.site-header {
+		margin-bottom: 0.7rem;
+	}
+
 	.brand-logo {
 		width: 34px;
 		height: 34px;
 	}
 
 	.container {
-		padding: 0 2.4rem;
+		padding: 0 2.6rem;
 	}
 
 	.nav-toggle {
@@ -1055,6 +1092,12 @@ main {
 
 	.header-inner {
 		padding: 0.7rem 0;
+	}
+
+	.header-inner,
+	.footer-inner {
+		justify-content: center;
+		text-align: center;
 	}
 
 	.brand-name {
@@ -1079,6 +1122,13 @@ main {
 		padding-top: 2.6rem;
 	}
 
+	.hero-inner,
+	.hero-text,
+	.hero-actions {
+		align-items: center;
+		text-align: center;
+	}
+
 	.hero-actions {
 		flex-direction: column;
 		align-items: stretch;
@@ -1086,5 +1136,32 @@ main {
 
 	.btn {
 		width: 100%;
+	}
+
+	.ip-pill,
+	.hero-actions .btn {
+		display: flex;
+		width: calc(100vw - 10px);
+		max-width: 640px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.ip-pill {
+		animation: none;
+	}
+	
+	.page-home .grid-section .container {
+		text-align: center;
+	}
+
+	.page-home .grid-section .grid-3,
+	.page-home .grid-section .grid-2 {
+		justify-items: center;
+	}
+
+	.page-home .grid-section .info-card {
+		margin-left: auto;
+		margin-right: auto;
 	}
 }

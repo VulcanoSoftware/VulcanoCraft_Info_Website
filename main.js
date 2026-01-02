@@ -647,4 +647,30 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		});
 	}
+
+	var revealSelector = ".info-card, .status-card, .discord-layout > div, .hardware-highlight, .spec-group, .owners-grid .info-card, .page-hero .container, .grid-section .container, .hero-card, .hero-actions .btn, .ip-pill";
+	var revealElements = document.querySelectorAll(revealSelector);
+	if (revealElements.length) {
+		for (var ri = 0; ri < revealElements.length; ri++) {
+			revealElements[ri].classList.add("reveal-on-scroll");
+		}
+		if ("IntersectionObserver" in window) {
+			var observer = new IntersectionObserver(function (entries, obs) {
+				for (var ei = 0; ei < entries.length; ei++) {
+					var entry = entries[ei];
+					if (entry.isIntersecting || entry.intersectionRatio > 0) {
+						entry.target.classList.add("is-visible");
+						obs.unobserve(entry.target);
+					}
+				}
+			}, { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.1 });
+			for (var oi = 0; oi < revealElements.length; oi++) {
+				observer.observe(revealElements[oi]);
+			}
+		} else {
+			for (var fi = 0; fi < revealElements.length; fi++) {
+				revealElements[fi].classList.add("is-visible");
+			}
+		}
+	}
 });

@@ -452,7 +452,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	   Om een thema toe te voegen: voeg hier een item toe, een vertaling
 	   (theme.<id>) en het bijbehorende CSS-blok. */
 	var THEME_STORAGE_KEY = "vcn-theme";
-	var DEFAULT_THEME = "default";
+	var DEFAULT_THEME = "volcano";
 	var themes = [
 		{ id: "default", nameKey: "theme.default", fallback: "Ice", swatch: ["#6366f1", "#22d3ee"] },
 		{ id: "volcano", nameKey: "theme.volcano", fallback: "Vulcano", swatch: ["#ef4444", "#facc15"] }

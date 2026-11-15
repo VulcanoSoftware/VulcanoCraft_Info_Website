@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			"nav.status": "Status",
 			"nav.discord": "Discord",
 			"nav.about": "About",
+			"theme.label": "Theme",
+			"theme.default": "Default",
+			"theme.volcano": "Volcano",
 			"footer.disclaimer": "Not affiliated with Mojang or Microsoft",
 			"home.hero.subtitle": "Join the VulcanoCraft Minecraft network and play together with the community.",
 			"home.hero.btn.gamemodes": "View gamemodes",
@@ -176,6 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			"nav.status": "Status",
 			"nav.discord": "Discord",
 			"nav.about": "Over ons",
+			"theme.label": "Thema",
+			"theme.default": "Standaard",
+			"theme.volcano": "Vulkaan",
 			"footer.disclaimer": "Niet verbonden aan Mojang of Microsoft",
 			"home.hero.subtitle": "Word lid van het VulcanoCraft Minecraft-netwerk en speel samen met de community.",
 			"home.hero.btn.gamemodes": "Bekijk gamemodes",
@@ -424,6 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 		updateLangToggle();
+		renderThemeUI();
 	}
 
 	function updateLangToggle() {
@@ -439,6 +446,221 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 	}
+
+	/* ---------- Thema's ----------
+	   Een thema is een set CSS-variabelen in styles.css (:root[data-theme="<id>"]).
+	   Om een thema toe te voegen: voeg hier een item toe, een vertaling
+	   (theme.<id>) en het bijbehorende CSS-blok. */
+	var THEME_STORAGE_KEY = "vcn-theme";
+	var DEFAULT_THEME = "default";
+	var themes = [
+		{ id: "default", nameKey: "theme.default", fallback: "Default", swatch: ["#6366f1", "#22d3ee"] },
+		{ id: "volcano", nameKey: "theme.volcano", fallback: "Volcano", swatch: ["#ef4444", "#facc15"] }
+	];
+
+	function findTheme(id) {
+		for (var i = 0; i < themes.length; i++) {
+			if (themes[i].id === id) {
+				return themes[i];
+			}
+		}
+		return null;
+	}
+
+	function readStoredTheme() {
+		try {
+			var stored = localStorage.getItem(THEME_STORAGE_KEY);
+			if (findTheme(stored)) {
+				return stored;
+			}
+		} catch (e) { }
+		return DEFAULT_THEME;
+	}
+
+	var currentTheme = readStoredTheme();
+	var themeSwitcher = null;
+	var themeToggle = null;
+	var themeMenu = null;
+	var themeOptions = [];
+
+	function swatchBackground(theme) {
+		return "linear-gradient(135deg, " + theme.swatch[0] + ", " + theme.swatch[1] + ")";
+	}
+
+	function renderThemeUI() {
+		if (!themeToggle || !themeMenu) {
+			return;
+		}
+		var active = findTheme(currentTheme) || themes[0];
+		var activeName = t(active.nameKey, active.fallback);
+		var themeLabel = t("theme.label", "Theme");
+		var toggleSwatch = themeToggle.querySelector("[data-theme-swatch]");
+		if (toggleSwatch) {
+			toggleSwatch.style.background = swatchBackground(active);
+		}
+		themeToggle.setAttribute("aria-label", themeLabel + ": " + activeName);
+		themeToggle.setAttribute("title", themeLabel);
+		themeMenu.setAttribute("aria-label", themeLabel);
+		for (var i = 0; i < themeOptions.length; i++) {
+			var option = themeOptions[i];
+			var theme = findTheme(option.getAttribute("data-theme-id"));
+			var nameNode = option.querySelector(".theme-option-name");
+			if (theme && nameNode) {
+				nameNode.textContent = t(theme.nameKey, theme.fallback);
+			}
+			option.setAttribute("aria-selected", option.getAttribute("data-theme-id") === currentTheme ? "true" : "false");
+		}
+	}
+
+	function applyTheme(id, persist) {
+		if (!findTheme(id)) {
+			id = DEFAULT_THEME;
+		}
+		currentTheme = id;
+		document.documentElement.setAttribute("data-theme", id);
+		if (persist) {
+			try {
+				localStorage.setItem(THEME_STORAGE_KEY, id);
+			} catch (e) { }
+		}
+		renderThemeUI();
+	}
+
+	function setThemeMenuOpen(open, focusOption) {
+		if (!themeSwitcher || !themeToggle) {
+			return;
+		}
+		if (open) {
+			var langSwitcherNode = document.getElementById("lang-switcher");
+			if (langSwitcherNode) {
+				langSwitcherNode.classList.remove("open");
+			}
+			themeSwitcher.classList.add("open");
+			themeToggle.setAttribute("aria-expanded", "true");
+			if (focusOption) {
+				var target = themeMenu.querySelector('[aria-selected="true"]') || themeOptions[0];
+				if (target) {
+					target.focus();
+				}
+			}
+		} else {
+			themeSwitcher.classList.remove("open");
+			themeToggle.setAttribute("aria-expanded", "false");
+		}
+	}
+
+	function moveThemeFocus(step) {
+		var index = themeOptions.indexOf(document.activeElement);
+		var next = index === -1 ? 0 : (index + step + themeOptions.length) % themeOptions.length;
+		themeOptions[next].focus();
+	}
+
+	var themeHeaderRight = document.querySelector(".header-right");
+	if (themeHeaderRight) {
+		themeSwitcher = document.createElement("div");
+		themeSwitcher.className = "theme-switcher";
+		themeSwitcher.id = "theme-switcher";
+
+		themeToggle = document.createElement("button");
+		themeToggle.type = "button";
+		themeToggle.className = "theme-toggle";
+		themeToggle.id = "theme-toggle";
+		themeToggle.setAttribute("aria-haspopup", "listbox");
+		themeToggle.setAttribute("aria-expanded", "false");
+		themeToggle.setAttribute("aria-controls", "theme-menu");
+		themeToggle.innerHTML = '<span class="theme-swatch" data-theme-swatch aria-hidden="true"></span>' +
+			'<span class="theme-chevron" aria-hidden="true">▾</span>';
+
+		themeMenu = document.createElement("div");
+		themeMenu.className = "theme-menu";
+		themeMenu.id = "theme-menu";
+		themeMenu.setAttribute("role", "listbox");
+
+		for (var ti = 0; ti < themes.length; ti++) {
+			var option = document.createElement("button");
+			option.type = "button";
+			option.className = "theme-option";
+			option.setAttribute("role", "option");
+			option.setAttribute("data-theme-id", themes[ti].id);
+
+			var optionSwatch = document.createElement("span");
+			optionSwatch.className = "theme-swatch";
+			optionSwatch.setAttribute("aria-hidden", "true");
+			optionSwatch.style.background = swatchBackground(themes[ti]);
+
+			var optionName = document.createElement("span");
+			optionName.className = "theme-option-name";
+
+			var optionCheck = document.createElement("span");
+			optionCheck.className = "theme-option-check";
+			optionCheck.setAttribute("aria-hidden", "true");
+
+			option.appendChild(optionSwatch);
+			option.appendChild(optionName);
+			option.appendChild(optionCheck);
+			option.addEventListener("click", function (e) {
+				applyTheme(e.currentTarget.getAttribute("data-theme-id"), true);
+				setThemeMenuOpen(false);
+				themeToggle.focus();
+			});
+			themeOptions.push(option);
+			themeMenu.appendChild(option);
+		}
+
+		themeSwitcher.appendChild(themeToggle);
+		themeSwitcher.appendChild(themeMenu);
+
+		var langSwitcherAnchor = document.getElementById("lang-switcher");
+		if (langSwitcherAnchor && langSwitcherAnchor.parentNode === themeHeaderRight) {
+			themeHeaderRight.insertBefore(themeSwitcher, langSwitcherAnchor);
+		} else {
+			themeHeaderRight.appendChild(themeSwitcher);
+		}
+
+		themeToggle.addEventListener("click", function (e) {
+			var willOpen = !themeSwitcher.classList.contains("open");
+			// e.detail === 0: geactiveerd met het toetsenbord, dan meteen de lijst in
+			setThemeMenuOpen(willOpen, willOpen && e.detail === 0);
+		});
+
+		themeToggle.addEventListener("keydown", function (e) {
+			if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+				e.preventDefault();
+				setThemeMenuOpen(true, true);
+			}
+		});
+
+		themeMenu.addEventListener("keydown", function (e) {
+			if (e.key === "Escape" || e.key === "Esc") {
+				e.preventDefault();
+				setThemeMenuOpen(false);
+				themeToggle.focus();
+			} else if (e.key === "ArrowDown") {
+				e.preventDefault();
+				moveThemeFocus(1);
+			} else if (e.key === "ArrowUp") {
+				e.preventDefault();
+				moveThemeFocus(-1);
+			} else if (e.key === "Home") {
+				e.preventDefault();
+				themeOptions[0].focus();
+			} else if (e.key === "End") {
+				e.preventDefault();
+				themeOptions[themeOptions.length - 1].focus();
+			} else if (e.key === "Tab") {
+				setThemeMenuOpen(false);
+			}
+		});
+
+		// Capture-fase, zodat ook klikken op elementen die stopPropagation gebruiken (taalwissel) de lijst sluiten
+		document.addEventListener("click", function (e) {
+			if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+				setThemeMenuOpen(false);
+			}
+		}, true);
+	}
+
+	applyTheme(currentTheme, false);
 
 	var switcher = document.getElementById("lang-switcher");
 	if (switcher) {
@@ -571,6 +793,18 @@ document.addEventListener("DOMContentLoaded", function () {
 		}, 1600);
 	}
 
+	function getConfettiColors() {
+		var fallback = ["#22d3ee", "#6366f1", "#f97316", "#facc15", "#ec4899"];
+		try {
+			var raw = getComputedStyle(document.documentElement).getPropertyValue("--confetti-colors");
+			var list = raw.split(",").map(function (c) { return c.trim(); }).filter(function (c) { return c; });
+			if (list.length) {
+				return list;
+			}
+		} catch (e) { }
+		return fallback;
+	}
+
 	function launchConfettiFromElement(element) {
 		if (!element) {
 			return;
@@ -578,7 +812,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		var rect = element.getBoundingClientRect();
 		var originX = rect.left + rect.width / 2;
 		var originY = rect.top + rect.height / 2;
-		var colors = ["#22d3ee", "#6366f1", "#f97316", "#facc15", "#ec4899"];
+		var colors = getConfettiColors();
 		var count = 26;
 		for (var i = 0; i < count; i++) {
 			var piece = document.createElement("div");

@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			"nav.status": "Status",
 			"nav.discord": "Discord",
 			"nav.about": "About",
+			"theme.label": "Theme",
+			"theme.default": "Default",
+			"theme.lava": "Lava",
 			"footer.disclaimer": "Not affiliated with Mojang or Microsoft",
 			"home.hero.subtitle": "Join the VulcanoCraft Minecraft network and play together with the community.",
 			"home.hero.btn.gamemodes": "View gamemodes",
@@ -176,6 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			"nav.status": "Status",
 			"nav.discord": "Discord",
 			"nav.about": "Over ons",
+			"theme.label": "Thema",
+			"theme.default": "Standaard",
+			"theme.lava": "Lava",
 			"footer.disclaimer": "Niet verbonden aan Mojang of Microsoft",
 			"home.hero.subtitle": "Word lid van het VulcanoCraft Minecraft-netwerk en speel samen met de community.",
 			"home.hero.btn.gamemodes": "Bekijk gamemodes",
@@ -424,6 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 		updateLangToggle();
+		updateThemeToggle();
 	}
 
 	function updateLangToggle() {
@@ -482,6 +489,103 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 	} else {
 		applyLanguage(currentLang);
+	}
+
+	var themeOrder = ["default", "lava"];
+	var currentTheme = localStorage.getItem("vcn-theme");
+	if (themeOrder.indexOf(currentTheme) === -1) {
+		currentTheme = "default";
+	}
+
+	function themeLabel(theme) {
+		return t("theme." + theme, theme);
+	}
+
+	function applyTheme(theme) {
+		if (themeOrder.indexOf(theme) === -1) {
+			theme = "default";
+		}
+		currentTheme = theme;
+		localStorage.setItem("vcn-theme", theme);
+		if (theme === "default") {
+			document.documentElement.removeAttribute("data-theme");
+		} else {
+			document.documentElement.setAttribute("data-theme", theme);
+		}
+		var optionButtons = document.querySelectorAll(".theme-btn");
+		for (var i = 0; i < optionButtons.length; i++) {
+			var name = optionButtons[i].getAttribute("data-theme-option");
+			if (name === theme) {
+				optionButtons[i].classList.add("active");
+			} else {
+				optionButtons[i].classList.remove("active");
+			}
+		}
+		updateThemeToggle();
+	}
+
+	function updateThemeToggle() {
+		var swatches = document.querySelectorAll("[data-theme-swatch]");
+		for (var s = 0; s < swatches.length; s++) {
+			swatches[s].className = "theme-swatch theme-swatch-" + currentTheme;
+		}
+		var labels = document.querySelectorAll("[data-theme-label]");
+		for (var l = 0; l < labels.length; l++) {
+			labels[l].textContent = themeLabel(currentTheme);
+		}
+		var optionLabels = document.querySelectorAll(".theme-btn [data-theme-option-label]");
+		for (var o = 0; o < optionLabels.length; o++) {
+			var btn = optionLabels[o].closest(".theme-btn");
+			if (btn) {
+				optionLabels[o].textContent = themeLabel(btn.getAttribute("data-theme-option"));
+			}
+		}
+	}
+
+	var headerRight = document.querySelector(".header-right");
+	var langSwitcher = document.getElementById("lang-switcher");
+	if (headerRight && langSwitcher) {
+		var themeSwitcher = document.createElement("div");
+		themeSwitcher.className = "theme-switcher";
+		var themeToggle = document.createElement("button");
+		themeToggle.type = "button";
+		themeToggle.className = "theme-toggle";
+		themeToggle.setAttribute("aria-label", "Theme");
+		themeToggle.innerHTML = '<span class="theme-swatch" data-theme-swatch></span><span class="theme-label" data-theme-label></span><span class="lang-chevron">\u25be</span>';
+		var themeMenu = document.createElement("div");
+		themeMenu.className = "theme-menu";
+		for (var ti = 0; ti < themeOrder.length; ti++) {
+			var themeName = themeOrder[ti];
+			var themeBtn = document.createElement("button");
+			themeBtn.type = "button";
+			themeBtn.className = "theme-btn";
+			themeBtn.setAttribute("data-theme-option", themeName);
+			themeBtn.innerHTML = '<span class="theme-swatch theme-swatch-' + themeName + '"></span><span data-theme-option-label></span>';
+			themeMenu.appendChild(themeBtn);
+		}
+		themeSwitcher.appendChild(themeToggle);
+		themeSwitcher.appendChild(themeMenu);
+		headerRight.insertBefore(themeSwitcher, langSwitcher);
+		applyTheme(currentTheme);
+		var themeBtns = themeMenu.querySelectorAll(".theme-btn");
+		for (var tb = 0; tb < themeBtns.length; tb++) {
+			themeBtns[tb].addEventListener("click", function (e) {
+				var theme = e.currentTarget.getAttribute("data-theme-option");
+				if (theme && theme !== currentTheme) {
+					applyTheme(theme);
+				}
+				themeSwitcher.classList.remove("open");
+			});
+		}
+		themeToggle.addEventListener("click", function (e) {
+			e.stopPropagation();
+			themeSwitcher.classList.toggle("open");
+		});
+		document.addEventListener("click", function () {
+			themeSwitcher.classList.remove("open");
+		});
+	} else {
+		applyTheme(currentTheme);
 	}
 
 	var pill = document.getElementById("ip-pill");

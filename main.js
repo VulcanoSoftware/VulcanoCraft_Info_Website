@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
 			"nav.discord": "Discord",
 			"nav.about": "About",
 			"theme.label": "Theme",
-			"theme.default": "Default",
-			"theme.volcano": "Volcano",
+			"theme.default": "Ice",
+			"theme.volcano": "Vulcano",
 			"footer.disclaimer": "Not affiliated with Mojang or Microsoft",
 			"home.hero.subtitle": "Join the VulcanoCraft Minecraft network and play together with the community.",
 			"home.hero.btn.gamemodes": "View gamemodes",
@@ -180,8 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
 			"nav.discord": "Discord",
 			"nav.about": "Over ons",
 			"theme.label": "Thema",
-			"theme.default": "Standaard",
-			"theme.volcano": "Vulkaan",
+			"theme.default": "IJs",
+			"theme.volcano": "Vulcano",
 			"footer.disclaimer": "Niet verbonden aan Mojang of Microsoft",
 			"home.hero.subtitle": "Word lid van het VulcanoCraft Minecraft-netwerk en speel samen met de community.",
 			"home.hero.btn.gamemodes": "Bekijk gamemodes",
@@ -454,8 +454,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	var THEME_STORAGE_KEY = "vcn-theme";
 	var DEFAULT_THEME = "default";
 	var themes = [
-		{ id: "default", nameKey: "theme.default", fallback: "Default", swatch: ["#6366f1", "#22d3ee"] },
-		{ id: "volcano", nameKey: "theme.volcano", fallback: "Volcano", swatch: ["#ef4444", "#facc15"] }
+		{ id: "default", nameKey: "theme.default", fallback: "Ice", swatch: ["#6366f1", "#22d3ee"] },
+		{ id: "volcano", nameKey: "theme.volcano", fallback: "Vulcano", swatch: ["#ef4444", "#facc15"] }
 	];
 
 	function findTheme(id) {

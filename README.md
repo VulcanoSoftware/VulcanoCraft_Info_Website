@@ -20,8 +20,8 @@ Structuur
 - `about.html` – informatie over VulcanoCraft en de eigenaars
 - `hardware.html` – informatie over hardware en infrastructuur
 - `discord.html` – informatie en link naar de Discord
-- `styles.css` – alle styling (inclusief responsive gedrag)
-- `main.js` – taalwissel, navigatie-menu en kleine interactieve functies
+- `styles.css` – alle styling (inclusief thema’s en responsive gedrag)
+- `main.js` – taalwissel, thema-keuze, navigatie-menu en kleine interactieve functies
 - `img/` – afbeeldingen (logo’s, server images, vlaggen)
 - `sound/` – geluiden (bijvoorbeeld villager-sound)
 
@@ -115,6 +115,30 @@ Taalwissel
 
 De website ondersteunt meerdere talen via knoppen in de header.  
 De taalkeuze wordt afgehandeld in `main.js` en gebruikt `data-i18n` attributen in de HTML.
+
+Thema’s
+-------
+
+Bezoekers kiezen in de header (naast de taalwissel) via een dropdown hoe de site eruitziet.
+De keuze wordt bewaard in `localStorage` (`vcn-theme`) en geldt voor alle pagina’s.
+
+Beschikbare thema’s:
+
+- **Default** – het oorspronkelijke blauw/cyaan design
+- **Volcano** – geel en rood op een donkere lavabasis
+
+Hoe het werkt:
+
+- Alle kleuren staan als CSS-variabelen bovenaan `styles.css`.  
+  `:root` is het standaardthema, elk ander thema overschrijft de variabelen in `:root[data-theme="<id>"]`.
+- `main.js` bouwt de dropdown, zet `data-theme` op `<html>` en onthoudt de keuze.
+- Een klein scriptje in de `<head>` van elke pagina past het opgeslagen thema toe vóór de pagina tekent, zodat er geen flits van het verkeerde thema is.
+
+Een nieuw thema toevoegen:
+
+1. Kopieer het blok `:root[data-theme="volcano"]` in `styles.css` en pas de kleuren aan (`--confetti-colors` bepaalt de confetti bij het kopiëren van het IP).
+2. Voeg een item toe aan de `themes`-lijst in `main.js` (`id`, `nameKey`, `swatch`).
+3. Voeg de vertalingen `theme.<id>` toe aan `en` en `nl` in `main.js`.
 
 Responsiveness
 --------------
